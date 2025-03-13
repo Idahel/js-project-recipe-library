@@ -35,6 +35,11 @@ p {
     font-weight: 400;
 }
 
+.ingredient-btn{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 .cuisine-info {
     margin-top: 5px;
     margin-bottom: 5px;

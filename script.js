@@ -42,7 +42,7 @@ const displayRecipes = (allRecipes) => {
         <p class="time-info"><span class="bold">Time:</span> ${recipe.readyInMinutes} minutes</p>
         <hr>
         <div class ="ingredient-list">
-        <p class="ingredients" onclick="toggleIngredients('ingredients-${recipe.id}')">Ingredients:</p>
+        <button class="ingredient-btn" onclick="toggleIngredients('ingredients-${recipe.id}')">Ingredients</button>
         <ul id="ingredients-${recipe.id}" class="hidden-ingredients">${ingredientListItems}</ul>
         </div>
         <button class="instructions-btn" onclick="showInstructions(${recipe.id})">Show Instructions</button>
