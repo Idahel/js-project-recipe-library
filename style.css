@@ -1,0 +1,159 @@
+/* Base styles */
+* {
+    margin: 0;
+    padding: 10;
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+}
+
+body {
+    background-color: #fafbff;
+    margin: 10px;
+}
+
+header {
+    margin-bottom: 30px;
+    margin-top: 30px;
+}
+
+h1 {
+    color: #0018A4;
+    font-size: 64px;
+    font-weight: 700;
+    margin-left: 10px;
+}
+
+h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    margin-top: 16px;
+}
+
+p {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.cuisine-info {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.time-info {
+    margin-bottom: 5px;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+.ingredients{
+    font-weight: 700;
+    margin-top: 5px;
+}
+
+
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 30px;
+    margin-left: 10px;
+}
+
+button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 50px;
+    border: 2px solid transparent;
+    font-weight: 500;
+    font-size: 16px;
+    color: #0018A4;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    border: 2px solid #0018A4;
+  }
+
+.sort-btn {
+    background-color: #FFECEA;
+  }
+
+.random-btn {
+    background-color: #CCFFE2;
+}
+
+.recipes-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 16px;
+}
+
+.recipe-card {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border: 1px solid grey;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    width: 290px;
+    justify-self: center;
+    transition: ease-in-out 0.3s;
+}
+
+.recipe-card:hover {
+    transform: translateY(-5px);
+}
+
+.recipe-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+ul { 
+    list-style: none;
+    padding: 0;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+li {
+    line-height: 25px;
+}
+
+.instructions-btn {
+margin-top: auto;
+}
+
+select {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 50px;
+    border: 2px solid transparent;
+    font-weight: 500;
+    font-size: 16px;
+    color: #0018A4;
+    background-color: rgb(209, 243, 255);
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+  
+  select:focus {
+    outline: none;
+  }
+
+  select:hover {
+    outline: none;
+    border: 2px solid #0018A4;
+  }
+
+  .hidden-ingredients {
+    display: none;
+}
+  
