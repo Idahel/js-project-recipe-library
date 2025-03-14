@@ -5,11 +5,17 @@ const btnDescendingIngredients = document.getElementById('btn-descending-ingredi
 const btnDescending = document.getElementById('btn-descending')
 const btnAscending = document.getElementById('btn-ascending')
 const btnRandom = document.getElementById('btn-random')
+
 const baseUrl = "https://api.spoonacular.com/recipes/random"
 const apiKey = "110e75fc870c4091a4fd4bf706e6efc8"
-const url = `${baseUrl}/?apiKey=${apiKey}&number=50`
+const numRecipes = 50;
+const url = `${baseUrl}/?apiKey=${apiKey}&number=${numRecipes}`
 
 let allRecipes = []
+
+const displayError = (message) => {
+    recipesContainer.innerHTML = `<p class="error-message">${message}</p>`
+}
 
 const fetchRecipes = () => {
     fetch (url)
@@ -21,7 +27,7 @@ const fetchRecipes = () => {
 
     })
     .catch(error => {
-        console.error ('Error fetching data', error)
+        alert ('Error fetching data', error)
     })
 }
 
@@ -29,7 +35,6 @@ const displayRecipes = (allRecipes) => {
     recipesContainer.innerHTML = ''
 
     allRecipes.forEach(recipe => {
-        console.log(recipe)
         let ingredientListItems = ''
         recipe.extendedIngredients.forEach(ingredient => {
             ingredientListItems += `<li class="ingredients-li">${ingredient.name}</li>`
@@ -41,16 +46,18 @@ const displayRecipes = (allRecipes) => {
         <hr>
         <p class="time-info"><span class="bold">Time:</span> ${recipe.readyInMinutes} minutes</p>
         <hr>
+        <div class="card-buttons">
         <div class ="ingredient-list">
         <button class="ingredient-btn" onclick="toggleIngredients('ingredients-${recipe.id}')">Ingredients</button>
         <ul id="ingredients-${recipe.id}" class="hidden-ingredients">${ingredientListItems}</ul>
         </div>
         <button class="instructions-btn" onclick="showInstructions(${recipe.id})">Show Instructions</button>
+        </div>
     </div>`
 })
 }
 
-function toggleIngredients(ingredientsId) {
+const toggleIngredients = (ingredientsId) => {
     const ingredientsList = document.getElementById(ingredientsId);
     if (ingredientsList.style.display === 'none' || ingredientsList.style.display === '') {
         ingredientsList.style.display = 'block';
