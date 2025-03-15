@@ -109,12 +109,22 @@ button:hover {
     background-color: #CCFFE2;
 }
 
+.random-btn:active {
+    background-color: #0018A4;
+}
+
 hr {
     margin-bottom: 10px;
 }
 
 .ingredient-btn, .instructions-btn{
     width: 100%;
+    background-color: #FFD6A5;
+}
+
+.ingredient-btn:active, .instructions-btn:active{
+    width: 100%;
+    background-color: #0018A4;
 }
 
 .cuisine-info {

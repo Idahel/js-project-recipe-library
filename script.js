@@ -9,38 +9,22 @@ const btnRandom = document.getElementById('btn-random')
 const baseUrl = "https://api.spoonacular.com/recipes/random"
 const apiKey = "110e75fc870c4091a4fd4bf706e6efc8"
 const numRecipes = 50;
-const url = `${baseUrl}/?apiKey=${apiKey}&number=${numRecipes}`
+const url = `${baseUrl}?apiKey=${apiKey}&number=${numRecipes}`
 
 let allRecipes = []
+let currentRecipes = []
+let lastSortAction = null;
 
 const displayError = (message) => {
     recipesContainer.innerHTML = `<p class="error-message">${message}</p>`
 }
 
-const fetchRecipes = () => {
-    fetch (url)
-    .then((response) => response.json ())
-    .then ((data) => {
-        console.log(data)
-        allRecipes = data.recipes
-        displayRecipes(allRecipes)
-
-    })
-    .catch(error => {
-        alert ('Error fetching data', error)
-    })
-}
-
-const displayRecipes = (allRecipes) => {
-    recipesContainer.innerHTML = ''
-
-    allRecipes.forEach(recipe => {
-        let ingredientListItems = ''
-        recipe.extendedIngredients.forEach(ingredient => {
-            ingredientListItems += `<li class="ingredients-li">${ingredient.name}</li>`
-        })
-
-    recipesContainer.innerHTML += `<div class="recipe-card" id="${recipe.id}">
+const createRecipeCard = (recipe) => {
+    const ingredientListItems = recipe.extendedIngredients
+    .map(ingredient => `<li>${ingredient.original}</li>`)
+    .join('')
+    return `
+        <div class="recipe-card" id="${recipe.id}">
         <img src="${recipe.image}" alt="${recipe.title}" class="recipe-img">
         <h2>${recipe.title}</h2>
         <hr>
@@ -54,7 +38,10 @@ const displayRecipes = (allRecipes) => {
         <button class="instructions-btn" onclick="showInstructions(${recipe.id})">Show Instructions</button>
         </div>
     </div>`
-})
+}
+
+const displayRecipes = (recipes) => {
+    recipesContainer.innerHTML = recipes.map(createRecipeCard).join('') 
 }
 
 const toggleIngredients = (ingredientsId) => {
@@ -69,111 +56,149 @@ const toggleIngredients = (ingredientsId) => {
 const showInstructions = (recipeId) => {
     const recipe = allRecipes.find(r => r.id === recipeId)
 
-    if (recipe) {
-        const recipeCard = document.getElementById(recipeId)
+    if (!recipe) {
+        displayError('Instructions not found. Please try again.')
+        return
+    }
+    const recipeCard = document.getElementById(recipeId)
+    const backButton = `<button class="button" onclick="displayRecipes(currentRecipes)">Back</button>`
 
-        if (recipe.instructions) {
-            recipeCard.innerHTML = `<h3>Instructions:</h3><p>${recipe.instructions}</p>
-            <button onclick="displayRecipes(allRecipes)">Back</button>`
-        } else {
-            recipeCard.innerHTML = `<p>Instructions not available.</p>
-            <button onclick="displayRecipes(allRecipes)">Back</button>`
-        }
+    if (recipe.instructions) {
+            recipeCard.innerHTML = `<h3>Instructions:</h3><p>${recipe.instructions}</p>${backButton}`
+    } else {
+            recipeCard.innerHTML = `<p>Instructions not available.</p>${backButton}`
     }
 }
 
 const filterRecipesByDiet = (diet) => {
-    let filteredRecipes
-    if (diet === '') {
-        filteredRecipes = allRecipes
-    } else if (diet === 'vegetarian') {
-        filteredRecipes = allRecipes.filter(recipe => recipe.vegetarian === true)
-    } else if (diet === 'vegan') {
-        filteredRecipes = allRecipes.filter(recipe => recipe.vegan === true)
+ if (!diet) {
+     return allRecipes
+ }
+ return allRecipes.filter(recipe => recipe[diet] === true)
+}
+
+const sortRecipes = (recipes, key, order = 'asc') => {
+    if (!recipes || recipes.length === 0) {
+        return []
     }
+    const sortedRecipes = [...recipes]
+
+    sortedRecipes.sort((a, b) => {
+        const valueA = key === 'extendedIngredients' ? a[key].length : a[key]
+        const valueB = key === 'extendedIngredients' ? b[key].length : b[key]
+
+        if (order === 'asc') {
+            return valueA - valueB
+        } else {
+            return valueB - valueA
+        }
+    })
+    return sortedRecipes
+}
+
+const applyFilterAndSort = () => {
+    const diet = dietFilter.value
+    const filteredRecipes = filterRecipesByDiet(diet)
 
     if (filteredRecipes.length === 0) {
-        recipesContainer.innerHTML = `<p>No recipes found. Try another filter.</p>`;
-    } else {
-        return filteredRecipes;
+        displayError('No recipes found matching the selected diet. Please try again.')
+        currentRecipes = []
+        return
     }
+
+    if (lastSortAction === 'ingredients-asc') {
+        filteredRecipes = sortRecipes(filteredRecipes, 'extendedIngredients', 'asc')
+    } else if (lastSortAction === 'ingredients-desc') {
+        filteredRecipes = sortRecipes(filteredRecipes, 'extendedIngredients', 'desc')
+    } else if (lastSortAction === 'time-asc') {
+        filteredRecipes = sortRecipes(filteredRecipes, 'readyInMinutes', 'asc')
+    } else if (lastSortAction === 'time-desc') {
+        filteredRecipes = sortRecipes(filteredRecipes, 'readyInMinutes', 'desc')
+    }
+    currentRecipes = filteredRecipes
+    displayRecipes(currentRecipes)
 }
 
-const sortOnIngredients = (recipes, order) => {
-    let sortedRecipesIngredients = [...recipes]
+// const sortOnIngredients = (recipes, order) => {
+//     let sortedRecipesIngredients = [...recipes]
 
-    sortedRecipesIngredients.sort ((a, b) => {
-        if (order === 'asc') {
-            return a.extendedIngredients.length - b.extendedIngredients.length
-        } else {
-            return b.extendedIngredients.length - a.extendedIngredients.length
-        }
-    })
+//     sortedRecipesIngredients.sort ((a, b) => {
+//         if (order === 'asc') {
+//             return a.extendedIngredients.length - b.extendedIngredients.length
+//         } else {
+//             return b.extendedIngredients.length - a.extendedIngredients.length
+//         }
+//     })
 
-    displayRecipes(sortedRecipesIngredients)
-}
+//     displayRecipes(sortedRecipesIngredients)
+// }
 
 
-const sortOnTime = (recipes, order) => {
-    let sortedRecipesTime = [...recipes]
-    sortedRecipesTime.sort((a, b) => {
-        if (order === 'asc') {
-            return a.readyInMinutes - b.readyInMinutes
-        } else {
-            return b.readyInMinutes - a.readyInMinutes
-        }
-    })
-    displayRecipes(sortedRecipesTime)
-}
+// const sortOnTime = (recipes, order) => {
+//     let sortedRecipesTime = [...recipes]
+//     sortedRecipesTime.sort((a, b) => {
+//         if (order === 'asc') {
+//             return a.readyInMinutes - b.readyInMinutes
+//         } else {
+//             return b.readyInMinutes - a.readyInMinutes
+//         }
+//     })
+//     displayRecipes(sortedRecipesTime)
+// }
 
 
 const showRandomRecipe = () => {
-    if(allRecipes.length === 0) return
+    if(allRecipes.length === 0){
+        displayError('No recipes found. Please try again.')
+        return
+    }
     const randomIndex = Math.floor(Math.random() * allRecipes.length)
     const randomRecipe = allRecipes[randomIndex]
-    displayRecipes([randomRecipe])
+    currentRecipes = [randomRecipe]
+    displayRecipes(currentRecipes)
 }
 
-dietFilter.addEventListener('change', () => {
-    const diet = dietFilter.value
-    const filteredRecipes = filterRecipesByDiet(diet)
-    if (filteredRecipes) {
-        displayRecipes (filteredRecipes)
-    }
-})
+dietFilter.addEventListener('change', applyFilterAndSort)
 
 btnAscendingIngredients.addEventListener('click', () => {
-    const diet = dietFilter.value
-    const filteredRecipes = filterRecipesByDiet (diet)
-    if (filteredRecipes) {
-        sortOnIngredients(filteredRecipes, 'asc')
-    }
+    lastSortAction = 'ingredients-asc'
+    applyFilterAndSort()
 })
 
 btnDescendingIngredients.addEventListener('click', () => {
-    const diet = dietFilter.value
-    const filteredRecipes = filterRecipesByDiet (diet)
-    if (filteredRecipes) {
-        sortOnIngredients(filteredRecipes, 'desc')
-    }
+    lastSortAction = 'ingredients-desc'
+    applyFilterAndSort()
 })
 
 btnAscending.addEventListener('click', () => {
-    const diet = dietFilter.value;
-    const filteredRecipes = filterRecipesByDiet(diet);
-    if(filteredRecipes){
-        sortOnTime(filteredRecipes, 'asc');
-    }
+    lastSortAction = 'time-asc'
+    applyFilterAndSort()
 })
 
 btnDescending.addEventListener('click', () => {
-    const diet = dietFilter.value;
-    const filteredRecipes = filterRecipesByDiet(diet);
-    if(filteredRecipes){
-        sortOnTime(filteredRecipes, 'desc');
-    }
+    lastSortAction = 'time-desc'
+    applyFilterAndSort()
 })
 
 btnRandom.addEventListener('click', showRandomRecipe)
+
+const fetchRecipes = () => {
+    fetch (url)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${error.message}`)
+        }
+        return response.json()
+    })
+    .then ((data) => {
+        allRecipes = data.recipes
+        currentRecipes = data.recipes
+        displayRecipes(currentRecipes)
+
+    })
+    .catch(error => {
+        displayError (`Error fetching data: ${error.message}`)
+    })
+}
 
 fetchRecipes()
