@@ -61,12 +61,12 @@ const showInstructions = (recipeId) => {
         return
     }
     const recipeCard = document.getElementById(recipeId)
-    const backButton = `<button class="button" onclick="displayRecipes(currentRecipes)">Back</button>`
+    const backButton = `<button class="back-button" onclick="displayRecipes(currentRecipes)">Back</button>`
 
     if (recipe.instructions) {
             recipeCard.innerHTML = `<h3>Instructions:</h3><p>${recipe.instructions}</p>${backButton}`
     } else {
-            recipeCard.innerHTML = `<p>Instructions not available.</p>${backButton}`
+            recipeCard.innerHTML = `<p class="instructions-list">Instructions not available.</p>${backButton}`
     }
 }
 
@@ -74,7 +74,7 @@ const filterRecipesByDiet = (diet) => {
  if (!diet) {
      return allRecipes
  }
- return allRecipes.filter(recipe => recipe[diet] === true)
+ return allRecipes.filter(recipe => recipe.hasOwnProperty(diet) && recipe[diet] === true)
 }
 
 const sortRecipes = (recipes, key, order = 'asc') => {
@@ -96,16 +96,31 @@ const sortRecipes = (recipes, key, order = 'asc') => {
     return sortedRecipes
 }
 
+const showRandomRecipe = () => {
+    if(allRecipes.length === 0){
+        displayError('No recipes found. Please try again.')
+        return
+    }
+    const randomIndex = Math.floor(Math.random() * allRecipes.length)
+    const randomRecipe = allRecipes[randomIndex]
+    currentRecipes = [randomRecipe]
+    displayRecipes(currentRecipes)
+}
+
 const applyFilterAndSort = () => {
     const diet = dietFilter.value
-    const filteredRecipes = filterRecipesByDiet(diet)
+
+    if (!diet) {
+        currentRecipes = [...allRecipes]
+    }
+
+    let filteredRecipes = filterRecipesByDiet(diet)
 
     if (filteredRecipes.length === 0) {
         displayError('No recipes found matching the selected diet. Please try again.')
         currentRecipes = []
         return
     }
-
     if (lastSortAction === 'ingredients-asc') {
         filteredRecipes = sortRecipes(filteredRecipes, 'extendedIngredients', 'asc')
     } else if (lastSortAction === 'ingredients-desc') {
@@ -116,45 +131,6 @@ const applyFilterAndSort = () => {
         filteredRecipes = sortRecipes(filteredRecipes, 'readyInMinutes', 'desc')
     }
     currentRecipes = filteredRecipes
-    displayRecipes(currentRecipes)
-}
-
-// const sortOnIngredients = (recipes, order) => {
-//     let sortedRecipesIngredients = [...recipes]
-
-//     sortedRecipesIngredients.sort ((a, b) => {
-//         if (order === 'asc') {
-//             return a.extendedIngredients.length - b.extendedIngredients.length
-//         } else {
-//             return b.extendedIngredients.length - a.extendedIngredients.length
-//         }
-//     })
-
-//     displayRecipes(sortedRecipesIngredients)
-// }
-
-
-// const sortOnTime = (recipes, order) => {
-//     let sortedRecipesTime = [...recipes]
-//     sortedRecipesTime.sort((a, b) => {
-//         if (order === 'asc') {
-//             return a.readyInMinutes - b.readyInMinutes
-//         } else {
-//             return b.readyInMinutes - a.readyInMinutes
-//         }
-//     })
-//     displayRecipes(sortedRecipesTime)
-// }
-
-
-const showRandomRecipe = () => {
-    if(allRecipes.length === 0){
-        displayError('No recipes found. Please try again.')
-        return
-    }
-    const randomIndex = Math.floor(Math.random() * allRecipes.length)
-    const randomRecipe = allRecipes[randomIndex]
-    currentRecipes = [randomRecipe]
     displayRecipes(currentRecipes)
 }
 

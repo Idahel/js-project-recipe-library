@@ -89,7 +89,6 @@ button {
     color: #0018A4;
     cursor: pointer;
     transition: all 0.3s ease;
-    background-color: transparent;
 }
 
 button:hover {
@@ -143,20 +142,12 @@ hr {
 .ingredients{
     font-weight: 700;
     margin-top: 5px;
+    padding: 10px;
 }
-
-
-
-
-
-
-
-
-
 
 ul { 
     list-style: none;
-    padding: 0;
+    padding: 10px;
     margin-bottom: 5px;
     margin-top: 5px;
 }
@@ -164,8 +155,6 @@ ul {
 li {
     line-height: 25px;
 }
-
-
 
 select {
     padding: 8px 16px;
@@ -193,4 +182,16 @@ select {
   .hidden-ingredients {
     display: none;
 }
-  
+
+.back-button {
+margin-top: auto;
+background-color: #0018A4;
+color: white;
+border: none;
+}
+
+ol {
+    padding: 10px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
