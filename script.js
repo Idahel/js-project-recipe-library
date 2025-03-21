@@ -16,7 +16,7 @@ const url = `${baseUrl}?apiKey=${apiKey}&number=${numRecipes}`
 
 let allRecipes = []
 let currentRecipes = []
-let lastSortAction = null
+let lastSortAction = []
 
 const displayError = (message) => {
     recipesContainer.innerHTML = `<p class="error-message">${message}</p>`
