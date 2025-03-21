@@ -34,7 +34,7 @@ p {
 }
 
 
-.filter-container {
+.recipe-filter-form {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;

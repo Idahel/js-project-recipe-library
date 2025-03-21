@@ -1,4 +1,5 @@
 const recipesContainer = document.getElementById('recipes-container')
+const recipeForm = document.getElementById('recipe-filter-form')
 const dietFilter = document.getElementById('diet-filter')
 const btnAscendingIngredients = document.getElementById('btn-ascending-ingredients')
 const btnDescendingIngredients = document.getElementById('btn-descending-ingredients')
