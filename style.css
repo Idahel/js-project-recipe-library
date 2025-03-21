@@ -1,4 +1,3 @@
-/* Base styles */
 *,
 *::before,
 *::after {
@@ -27,16 +26,13 @@ h1 {
 h2 {
     font-size: 18px;
     font-weight: 700;
-    margin: 16px 0;
+    margin: 20px 0;
 }
 
 p {
     font-size: 16px;
 }
 
-.bold {
-    font-weight: 700;
-}
 
 .filter-container {
     display: flex;
@@ -73,6 +69,10 @@ p {
     object-fit: cover;
 }
 
+.ingredient-btn, .instructions-btn{
+    width: 100%;
+    background-color: #FFD6A5;
+}
 .card-buttons{
     display: flex;
     flex-direction: column;
@@ -99,31 +99,12 @@ button:hover {
     background-color: #FFECEA;
   }
 
-.sort-btn:active {
-    background-color: black;
-  }
-
-
 .random-btn {
     background-color: #CCFFE2;
 }
 
-.random-btn:active {
-    background-color: #0018A4;
-}
-
 hr {
     margin-bottom: 10px;
-}
-
-.ingredient-btn, .instructions-btn{
-    width: 100%;
-    background-color: #FFD6A5;
-}
-
-.ingredient-btn:active, .instructions-btn:active{
-    width: 100%;
-    background-color: #0018A4;
 }
 
 .cuisine-info {

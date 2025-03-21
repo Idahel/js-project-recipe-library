@@ -5,18 +5,24 @@ const btnDescendingIngredients = document.getElementById('btn-descending-ingredi
 const btnDescending = document.getElementById('btn-descending')
 const btnAscending = document.getElementById('btn-ascending')
 const btnRandom = document.getElementById('btn-random')
+const CACHE_KEY = 'spoonacular_recipes_cache'
+const CACHE_EXPIRY = 24 * 60 * 60 * 1000
 
 const baseUrl = "https://api.spoonacular.com/recipes/random"
 const apiKey = "110e75fc870c4091a4fd4bf706e6efc8"
-const numRecipes = 50;
+const numRecipes = 50
 const url = `${baseUrl}?apiKey=${apiKey}&number=${numRecipes}`
 
 let allRecipes = []
 let currentRecipes = []
-let lastSortAction = null;
+let lastSortAction = null
 
 const displayError = (message) => {
     recipesContainer.innerHTML = `<p class="error-message">${message}</p>`
+}
+
+const displayLoading = () => {
+    recipesContainer.innerHTML = `<p class="loading-message">Loading recipes... Please wait.</p>`
 }
 
 const createRecipeCard = (recipe) => {
@@ -45,11 +51,11 @@ const displayRecipes = (recipes) => {
 }
 
 const toggleIngredients = (ingredientsId) => {
-    const ingredientsList = document.getElementById(ingredientsId);
+    const ingredientsList = document.getElementById(ingredientsId)
     if (ingredientsList.style.display === 'none' || ingredientsList.style.display === '') {
-        ingredientsList.style.display = 'block';
+        ingredientsList.style.display = 'block'
     } else {
-        ingredientsList.style.display = 'none';
+        ingredientsList.style.display = 'none'
     }
 }
 
@@ -134,6 +140,30 @@ const applyFilterAndSort = () => {
     displayRecipes(currentRecipes)
 }
 
+const saveToCache = (data) => {
+    const cacheData = {
+        timestamp: new Date().getTime(),
+        recipes: data.recipes
+    }
+    localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData))
+}
+
+const getFromCache = () => {
+    const cachedData = localStorage.getItem(CACHE_KEY)
+    if (!cachedData) return null
+
+    const parsedData = JSON.parse(cachedData)
+    const now = new Date().getTime()
+    
+    if (now - parsedData.timestamp > CACHE_EXPIRY) {
+        localStorage.removeItem(CACHE_KEY)
+        return null
+    }
+    
+    return parsedData
+}
+
+
 dietFilter.addEventListener('change', applyFilterAndSort)
 
 btnAscendingIngredients.addEventListener('click', () => {
@@ -159,6 +189,17 @@ btnDescending.addEventListener('click', () => {
 btnRandom.addEventListener('click', showRandomRecipe)
 
 const fetchRecipes = () => {
+
+    displayLoading ()
+
+    const cachedData = getFromCache()
+    if (cachedData) {
+        allRecipes = cachedData.recipes
+        currentRecipes = cachedData.recipes
+        displayRecipes(currentRecipes)
+        return
+    }
+
     fetch (url)
     .then(response => {
         if (!response.ok) {
@@ -171,9 +212,15 @@ const fetchRecipes = () => {
         currentRecipes = data.recipes
         displayRecipes(currentRecipes)
 
+        saveToCache(data)
+
     })
     .catch(error => {
-        displayError (`Error fetching data: ${error.message}`)
+        if (error.message.includes('quota')) {
+            displayError(`${error.message} You might want to update your API key or subscribe to a higher tier plan.`)
+        } else {
+            displayError(`Error fetching data: ${error.message}`)
+        }
     })
 }
 
