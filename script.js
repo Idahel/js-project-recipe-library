@@ -218,7 +218,7 @@ const fetchRecipes = () => {
     })
     .catch(error => {
         if (error.message.includes('quota')) {
-            displayError(`${error.message} You might want to update your API key or subscribe to a higher tier plan.`)
+            displayError(`${error.message} You've reached the limit for new recipes today.`)
         } else {
             displayError(`Error fetching data: ${error.message}`)
         }
